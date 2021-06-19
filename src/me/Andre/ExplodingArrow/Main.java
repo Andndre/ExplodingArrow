@@ -101,7 +101,7 @@ public class Main extends JavaPlugin implements Listener {
         if(event.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)){
             int random = random(1, 100);
 
-            if(random < 5){ // 5% change
+            if(random < 5){ // 5% chance
                 Player player = event.getPlayer();
                 ItemStack bow = new ItemStack(Material.BOW, 1);
 
