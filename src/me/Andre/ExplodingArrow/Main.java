@@ -106,7 +106,6 @@ public class Main extends JavaPlugin implements Listener {
                 ItemStack bow = new ItemStack(Material.BOW, 1);
 
                 CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getMaxLevel(), EXPLODING_ARROW.getStartLevel()));
-                player.getInventory().addItem(bow);
 
                 if(event.getCaught() != null) event.getCaught().remove();
 
