@@ -56,7 +56,7 @@ public class Main extends JavaPlugin implements Listener {
 
         if(command.getName().equalsIgnoreCase("giveCustomBowWithExplodeEnchant")){
             ItemStack bow = new ItemStack(Material.BOW);
-            CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getMaxLevel(), EXPLODING_ARROW.getStartLevel()));
+            CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getStartLevel(), EXPLODING_ARROW.getMaxLevel()));
             player.getInventory().addItem(bow);
 
             return true;
@@ -99,13 +99,13 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onFish(PlayerFishEvent event){
         if(event.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)){
-            int random = rand.nextInt(99) + 1;
+            int random = random(1, 100);
 
             if(random < 5){ // 5% change
                 Player player = event.getPlayer();
                 ItemStack bow = new ItemStack(Material.BOW, 1);
 
-                CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getMaxLevel(), EXPLODING_ARROW.getStartLevel()));
+                CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getStartLevel(), EXPLODING_ARROW.getMaxLevel()));
 
                 if(event.getCaught() != null) event.getCaught().remove();
 
