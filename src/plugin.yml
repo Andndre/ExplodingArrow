@@ -1,6 +1,6 @@
 name: ExplodingArrow
 main: me.Andre.ExplodingArrow.Main
-version: 0.0.1
+version: 1.0.0
 api-version: 1.13
 
 commands:
