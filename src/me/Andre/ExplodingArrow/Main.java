@@ -56,15 +56,13 @@ public class Main extends JavaPlugin implements Listener {
 
         if(command.getName().equalsIgnoreCase("giveCustomBowWithExplodeEnchant")){
             ItemStack bow = new ItemStack(Material.BOW);
-            CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, rand.nextInt(EXPLODING_ARROW.getMaxLevel()) + EXPLODING_ARROW.getStartLevel());
-
+            CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getMaxLevel(), EXPLODING_ARROW.getStartLevel()));
             player.getInventory().addItem(bow);
 
             return true;
         }
         return false;
     }
-
 
     @SuppressWarnings("ConstantConditions")
     @EventHandler
@@ -102,21 +100,23 @@ public class Main extends JavaPlugin implements Listener {
     public void onFish(PlayerFishEvent event){
         if(event.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)){
             int random = rand.nextInt(99) + 1;
-            if(random < 5){ // 5% change
 
+            if(random < 5){ // 5% change
                 Player player = event.getPlayer();
                 ItemStack bow = new ItemStack(Material.BOW, 1);
 
-                CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, rand.nextInt(EXPLODING_ARROW.getMaxLevel()) + EXPLODING_ARROW.getStartLevel());
+                CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getMaxLevel(), EXPLODING_ARROW.getStartLevel()));
                 player.getInventory().addItem(bow);
 
                 if(event.getCaught() != null) event.getCaught().remove();
 
                 Item drop = event.getPlayer().getWorld().dropItemNaturally(event.getHook().getLocation(), bow);
                 drop.setVelocity(player.getLocation().getDirection().normalize().multiply(-.5));
-
             }
-
         }
+    }
+
+    private int random(int min, int max){
+        return rand.nextInt(max + 1 - min) + min;
     }
 }
