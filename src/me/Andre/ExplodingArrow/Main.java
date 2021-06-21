@@ -2,6 +2,7 @@ package me.Andre.ExplodingArrow;
 
 import me.Andre.API.CustomEnchants;
 import me.Andre.API.EnchantmentWrapper;
+import me.Andre.API.InventoryHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,15 +25,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "ConstantConditions", "deprecation"})
 public class Main extends JavaPlugin implements Listener {
-    public final Enchantment EXPLODING_ARROW = new EnchantmentWrapper("explode", "Explode", 1, 3, EnchantmentTarget.BOW);
+    public final Enchantment EXPLODING_ARROW = new EnchantmentWrapper("explode", "Explode", 1, 4, EnchantmentTarget.BOW);
 
-    Random rand;
-    Map<Arrow, Integer> shootTask;
-    BukkitScheduler scheduler;
+    public InventoryHelper invh;
+    public Random rand;
+    public Map<Arrow, Integer> shootTask;
+    public BukkitScheduler scheduler;
+
     @Override
     public void onEnable() {
+        invh = new InventoryHelper();
         rand = new Random();
         CustomEnchants.register(EXPLODING_ARROW);
         scheduler = Bukkit.getScheduler();
@@ -48,46 +52,45 @@ public class Main extends JavaPlugin implements Listener {
     @SuppressWarnings("NullableProblems")
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!(sender instanceof Player)){
-            return false;
-        }
+        if(!(sender instanceof Player)) return false;
+        if(!sender.hasPermission("giveCustomBowWithExplodeEnchant.use")) return false;
 
         Player player = (Player) sender;
-
         if(command.getName().equalsIgnoreCase("giveCustomBowWithExplodeEnchant")){
             ItemStack bow = new ItemStack(Material.BOW);
-            CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getStartLevel(), EXPLODING_ARROW.getMaxLevel()));
-            player.getInventory().addItem(bow);
-
+            CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, CustomEnchants.getRandomLevel(EXPLODING_ARROW));
+            invh.giveItem(player, bow);
             return true;
         }
         return false;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @EventHandler
     public void onShoot(EntityShootBowEvent event){
         if(event.getEntity() instanceof Player){
             ItemStack bow = event.getBow();
+
+            // check if the bow has EXPLODING_ARROW enchantment
             if(bow.getItemMeta().hasEnchant(EXPLODING_ARROW)){
-                float explosion = 0;
+
                 int level = bow.getItemMeta().getEnchantLevel(EXPLODING_ARROW);
-                if(level == 1){
-                    explosion = 2F;
-                }
-                else if(level == 2){
-                    explosion = 4F;
-                }
-                else if(level == 3){
-                    explosion = 7F;
-                }
+
+                // set explosion power according the enchantment level
+                float explosionPower = level * 2;
+
+                // get the arrow
                 Arrow arrow = (Arrow) event.getProjectile();
-                float finalExplosion = explosion;
+
+                // wait
                 shootTask.put(arrow, scheduler.scheduleSyncRepeatingTask(this, () -> {
+
+                    // create explosion
                     if(arrow.isOnGround() || arrow.isDead()){
                         Location loc = arrow.getLocation();
                         arrow.remove();
-                        loc.getWorld().createExplosion(loc, finalExplosion);
+                        loc.getWorld().createExplosion(loc, explosionPower);
+
+                        // cancel task and remove the arrow from hashmap
                         scheduler.cancelTask(shootTask.get(arrow));
                         shootTask.remove(arrow);
                     }
@@ -101,20 +104,23 @@ public class Main extends JavaPlugin implements Listener {
         if(event.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)){
             int random = random(1, 100);
 
-            if(random < 5){ // 5% chance
+            if(random < 3){ // 3% chance
                 Player player = event.getPlayer();
                 ItemStack bow = new ItemStack(Material.BOW, 1);
 
-                CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, random(EXPLODING_ARROW.getStartLevel(), EXPLODING_ARROW.getMaxLevel()));
-
+                // add enchantment
+                CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, CustomEnchants.getRandomLevel(EXPLODING_ARROW));
                 if(event.getCaught() != null) event.getCaught().remove();
 
                 Item drop = event.getPlayer().getWorld().dropItemNaturally(event.getHook().getLocation(), bow);
+
+                // launch the item towards the opposite direction from where player is looking at
                 drop.setVelocity(player.getLocation().getDirection().normalize().multiply(-.5));
             }
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private int random(int min, int max){
         return rand.nextInt(max + 1 - min) + min;
     }
