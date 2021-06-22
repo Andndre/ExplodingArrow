@@ -1,8 +1,8 @@
-package me.Andre.ExplodingArrow;
+package me.andre.explodingarrow;
 
-import me.Andre.API.CustomEnchants;
-import me.Andre.API.EnchantmentWrapper;
-import me.Andre.API.InventoryHelper;
+import me.andre.api.CustomEnchants;
+import me.andre.api.EnchantmentWrapper;
+import me.andre.api.InventoryHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,18 +25,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@SuppressWarnings({"unused", "ConstantConditions", "deprecation"})
+@SuppressWarnings({"unused", "ConstantConditions"})
 public class Main extends JavaPlugin implements Listener {
+    @SuppressWarnings("deprecation")
     public final Enchantment EXPLODING_ARROW = new EnchantmentWrapper("explode", "Explode", 1, 4, EnchantmentTarget.BOW);
 
-    public InventoryHelper invh;
     public Random rand;
     public Map<Arrow, Integer> shootTask;
     public BukkitScheduler scheduler;
 
     @Override
     public void onEnable() {
-        invh = new InventoryHelper();
         rand = new Random();
         CustomEnchants.register(EXPLODING_ARROW);
         scheduler = Bukkit.getScheduler();
@@ -59,7 +58,7 @@ public class Main extends JavaPlugin implements Listener {
         if(command.getName().equalsIgnoreCase("giveCustomBowWithExplodeEnchant")){
             ItemStack bow = new ItemStack(Material.BOW);
             CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, CustomEnchants.getRandomLevel(EXPLODING_ARROW));
-            invh.giveItem(player, bow);
+            InventoryHelper.giveItem(player, bow);
             return true;
         }
         return false;
