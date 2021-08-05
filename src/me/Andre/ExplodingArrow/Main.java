@@ -2,7 +2,7 @@ package me.andre.explodingarrow;
 
 import me.andre.api.CustomEnchants;
 import me.andre.api.EnchantmentWrapper;
-import me.andre.api.InventoryHelper;
+import me.andre.api.InvH;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@SuppressWarnings({"unused", "ConstantConditions"})
 public class Main extends JavaPlugin implements Listener {
     @SuppressWarnings("deprecation")
     public final Enchantment EXPLODING_ARROW = new EnchantmentWrapper("explode", "Explode", 1, 4, EnchantmentTarget.BOW);
@@ -47,8 +46,7 @@ public class Main extends JavaPlugin implements Listener {
     public void onDisable() {
         scheduler.cancelTasks(this);
     }
-
-    @SuppressWarnings("NullableProblems")
+        
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return false;
@@ -58,7 +56,7 @@ public class Main extends JavaPlugin implements Listener {
         if(command.getName().equalsIgnoreCase("giveCustomBowWithExplodeEnchant")){
             ItemStack bow = new ItemStack(Material.BOW);
             CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, CustomEnchants.getRandomLevel(EXPLODING_ARROW));
-            InventoryHelper.giveItem(player, bow);
+            InvH.giveItem(player, bow);
             return true;
         }
         return false;
@@ -119,7 +117,6 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
-    @SuppressWarnings("SameParameterValue")
     private int random(int min, int max){
         return rand.nextInt(max + 1 - min) + min;
     }
