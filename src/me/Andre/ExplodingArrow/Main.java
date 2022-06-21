@@ -1,8 +1,5 @@
-package me.andre.explodingarrow;
+package me.Andre.ExplodingArrow;
 
-import me.andre.api.CustomEnchants;
-import me.andre.api.EnchantmentWrapper;
-import me.andre.api.InvH;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,7 +43,7 @@ public class Main extends JavaPlugin implements Listener {
     public void onDisable() {
         scheduler.cancelTasks(this);
     }
-        
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) return false;
@@ -56,7 +53,7 @@ public class Main extends JavaPlugin implements Listener {
         if(command.getName().equalsIgnoreCase("giveCustomBowWithExplodeEnchant")){
             ItemStack bow = new ItemStack(Material.BOW);
             CustomEnchants.addEnchantment(bow, EXPLODING_ARROW, CustomEnchants.getRandomLevel(EXPLODING_ARROW));
-            InvH.giveItem(player, bow);
+            InventoryHelper.giveItem(player, bow);
             return true;
         }
         return false;
@@ -99,9 +96,9 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void onFish(PlayerFishEvent event){
         if(event.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)){
-            int random = random(1, 100);
+            int random = Math.random(1, 100);
 
-            if(random < 3){ // 3% chance
+            if(random <= 3){ // 3% chance
                 Player player = event.getPlayer();
                 ItemStack bow = new ItemStack(Material.BOW, 1);
 
@@ -115,9 +112,5 @@ public class Main extends JavaPlugin implements Listener {
                 drop.setVelocity(player.getLocation().getDirection().normalize().multiply(-.5));
             }
         }
-    }
-
-    private int random(int min, int max){
-        return rand.nextInt(max + 1 - min) + min;
     }
 }
