@@ -4,7 +4,7 @@ A Minecraft plugin that adds a custom Bow with a custom "Explode" enchantment th
 
 Note: This plugin does not add custom enchantment **books**.
 
-[Download the lastest version.]()
+[Download the lastest version.](https://github.com/Andndre/ExplodingArrow/releases/latest)
 
 _The max level is IV._
 
